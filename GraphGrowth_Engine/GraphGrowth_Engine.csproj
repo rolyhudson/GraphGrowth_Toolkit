@@ -18,6 +18,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Adapter_oM">
+      <HintPath>..\..\..\ProgramData\BHoM\Assemblies\Adapter_oM.dll</HintPath>
+    </Reference>
+    <Reference Include="AIServices_Adapter">
+      <HintPath>..\..\..\ProgramData\BHoM\Assemblies\AIServices_Adapter.dll</HintPath>
+    </Reference>
+    <Reference Include="AIServices_Engine">
+      <HintPath>..\..\..\ProgramData\BHoM\Assemblies\AIServices_Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="AIServices_oM">
+      <HintPath>..\..\..\ProgramData\BHoM\Assemblies\AIServices_oM.dll</HintPath>
+    </Reference>
     <Reference Include="Analytical_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Analytical_oM.dll</HintPath>
     </Reference>
@@ -26,8 +38,17 @@
       <Private>false</Private>
       <SpecificVersion>false</SpecificVersion>
     </Reference>
+    <Reference Include="BHoM_Adapter">
+      <HintPath>..\..\..\ProgramData\BHoM\Assemblies\BHoM_Adapter.dll</HintPath>
+    </Reference>
     <Reference Include="BHoM_Engine">
       <HintPath>C:\ProgramData\BHoM\Assemblies\BHoM_Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="Data_Engine">
+      <HintPath>..\..\..\ProgramData\BHoM\Assemblies\Data_Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="Data_oM">
+      <HintPath>..\..\..\ProgramData\BHoM\Assemblies\Data_oM.dll</HintPath>
     </Reference>
     <Reference Include="Dimensional_oM">
       <HintPath>..\..\..\ProgramData\BHoM\Assemblies\Dimensional_oM.dll</HintPath>
@@ -43,6 +64,12 @@
     </Reference>
     <Reference Include="Geospatial_oM">
       <HintPath>..\..\..\ProgramData\BHoM\Assemblies\Geospatial_oM.dll</HintPath>
+    </Reference>
+    <Reference Include="Spatial_Engine">
+      <HintPath>..\..\..\ProgramData\BHoM\Assemblies\Spatial_Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="Spatial_oM">
+      <HintPath>..\..\..\ProgramData\BHoM\Assemblies\Spatial_oM.dll</HintPath>
     </Reference>
   </ItemGroup>
 
