@@ -1,10 +1,11 @@
-﻿using System;
+﻿using BH.oM.Base;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace BH.oM.GraphGrowth
 {
-    public interface IGrowthRule
+    public interface IGrowthConfiguration : IBHoMObject
     {
     }
 }

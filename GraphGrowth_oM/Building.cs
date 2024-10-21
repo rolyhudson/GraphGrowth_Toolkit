@@ -1,4 +1,5 @@
 ﻿using BH.oM.Geometry;
+using BH.oM.SpaceSyntax;
 using System;
 using System.Collections.Generic;
 using System.Text;

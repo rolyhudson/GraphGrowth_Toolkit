@@ -30,6 +30,9 @@
     <Reference Include="AIServices_oM">
       <HintPath>..\..\..\ProgramData\BHoM\Assemblies\AIServices_oM.dll</HintPath>
     </Reference>
+    <Reference Include="Analytical_Engine">
+      <HintPath>..\..\..\ProgramData\BHoM\Assemblies\Analytical_Engine.dll</HintPath>
+    </Reference>
     <Reference Include="Analytical_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Analytical_oM.dll</HintPath>
     </Reference>
@@ -65,16 +68,18 @@
     <Reference Include="Geospatial_oM">
       <HintPath>..\..\..\ProgramData\BHoM\Assemblies\Geospatial_oM.dll</HintPath>
     </Reference>
+    <Reference Include="SpaceSyntax_Engine">
+      <HintPath>..\..\..\ProgramData\BHoM\Assemblies\SpaceSyntax_Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="SpaceSyntax_oM">
+      <HintPath>..\..\..\ProgramData\BHoM\Assemblies\SpaceSyntax_oM.dll</HintPath>
+    </Reference>
     <Reference Include="Spatial_Engine">
       <HintPath>..\..\..\ProgramData\BHoM\Assemblies\Spatial_Engine.dll</HintPath>
     </Reference>
     <Reference Include="Spatial_oM">
       <HintPath>..\..\..\ProgramData\BHoM\Assemblies\Spatial_oM.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Create\" />
   </ItemGroup>
 
   <ItemGroup>

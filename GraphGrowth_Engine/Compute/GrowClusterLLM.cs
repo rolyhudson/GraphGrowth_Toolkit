@@ -15,7 +15,7 @@ namespace BH.Engine.Adapters.GraphGrowth
 {
     public static partial class Compute
     {
-        public static Polyline GrowCluster(Cluster cluster, AIServicesConfig aIServicesConfig)
+        public static Polyline GrowClusterLLM(Cluster cluster, AIServicesConfig aIServicesConfig)
         {
             Cluster clone = cluster.DeepClone();
             Vector returnTranslate = BH.Engine.Geometry.Create.Vector(clone.Bounds().Min);

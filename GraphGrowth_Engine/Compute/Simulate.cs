@@ -2,9 +2,14 @@
 using BH.oM.Adapters.AIServices;
 using BH.oM.Analytical;
 using BH.oM.Analytical.Graph;
+using BH.Engine.Analytical;
+using BH.oM.Data.Collections;
 using BH.oM.Geometry;
+using BH.Engine.Geometry;
 using BH.oM.GraphGrowth;
 using BH.oM.GraphGrowth.Results;
+using BH.oM.SpaceSyntax;
+using BH.Engine.SpaceSyntax;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,64 +17,40 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Collections;
+using BH.Engine.Geometry;
+using System.Transactions;
 
 namespace BH.Engine.Adapters.GraphGrowth
 {
     public static partial class Compute
     {
-        public static List<GraphGrowthResult> Simulate(Graph graph, AIServicesConfig aIServicesConfig, ClusterSettings clusterSettings, int steps = 0, List<IRule> analytics = null, string resultCase = "resultCase", int tick = 1, bool run = false, bool runChecks = true)
+        public static List<GraphGrowthResult> Simulate(Graph graph, IGrowthConfiguration configuration, int steps = 0, List<IGrowthRule> analytics = null, string resultCase = "resultCase", int tick = 1, bool run = false, bool runChecks = true)
         {
-           
-
             ResetGlobals();
+            //dymaic cast to other configs
+            GrowthConfiguration config = configuration as GrowthConfiguration;
             m_Results = new List<GraphGrowthResult>();
             if (!run)
                 return m_Results;
 
+            double isoDist = config.WalkingSpeed * config.Time;
             m_Graph = graph.DeepClone();
             m_Tick = tick;
 
             while (m_Timestep < steps)
             {
-                //filter building nodes
-                List<Building> buildings1 = new List<Building>();
-                m_Graph.Entities.Values.ToList().ForEach(e => 
-                { 
-                    if(e is  Building)
-                        buildings1.Add((Building)e);
-                });
-                //find clusters
-                List<Cluster> clusters = FindClusters(clusterSettings, buildings1);
-                //grow clusters
-                ConcurrentBag<Building> buildings = new ConcurrentBag<Building>();
-
-                Parallel.ForEach(clusters, cluster =>
+                //Dictionary<Guid, double> entityDepth = SpaceSyntax.Compute.EntityDepth(m_Graph, config.Start.BHoM_Guid);
+                List<IRelation> sorted = m_Graph.Relations.Shuffle().ToList();//.OrderBy(r => entityDepth[r.Source]).ToList();
+                foreach (int i in Query.RandomExponentialIndex(config.BranchesPerStep, 0, sorted.Count() - 1))
                 {
-                    Polyline polyline = GrowCluster(cluster, aIServicesConfig);
-                    if (polyline.ControlPoints.Count == 0)
-                        return;
-                    Building building = new Building()
-                    {
-                        Boundary = polyline,
-                        Position = polyline.Centroid()
-                    };
-                    buildings.Add(building);
-                });
+                    m_Graph = Modify.Branch(m_Graph, sorted[i], isoDist, 0.1, config.SelfIntersectTolerance);
+                }
 
-                //validate no overlaps
-                List<Building> valid = CheckRoadOverlaps(buildings.ToList(), m_Graph.Relations.Select(r => r.Curve).ToList());
-                valid = CheckBuildingOverlaps(valid, buildings1);
-                //add validated to graph
-                valid.ForEach(b => m_Graph.Entities.Add(b.BHoM_Guid,b));
-                //track step results
-                m_Results.Add(new LLMGrowthResult(m_Graph.BHoM_Guid, 1, m_Timestep, m_Graph.DeepClone()));
-
-                valid.ForEach(b => m_Results.Add(new ClusterGrowthResult(b.BHoM_Guid, 1, m_Timestep, b.Boundary)));
-                
                 m_Timestep += m_Tick;
-
+                m_Results.Add(new FinalGraphGrowthResult(m_Graph.BHoM_Guid, "", m_Timestep, m_Graph));
             }
-
+            
             return m_Results;
         }
 
@@ -98,6 +79,41 @@ namespace BH.Engine.Adapters.GraphGrowth
         private static Graph m_Graph;
 
         /***************************************************/
+        //SS LLM method
+            ////filter building nodes
+            //List<Building> buildings1 = new List<Building>();
+            //m_Graph.Entities.Values.ToList().ForEach(e => 
+            //{
+            //if (e is Building)
+            //buildings1.Add((Building)e);
+            //});
+            ////find clusters
+            //List<Cluster> clusters = FindClusters(clusterSettings, buildings1);
+            ////grow clusters
+            //ConcurrentBag<Building> buildings = new ConcurrentBag<Building>();
+
+            //Parallel.ForEach(clusters, cluster =>
+            //{
+            //Polyline polyline = GrowClusterLLM(cluster, aIServicesConfig);
+            //if (polyline.ControlPoints.Count == 0)
+            //return;
+            //Building building = new Building()
+            //{
+            //Boundary = polyline,
+            //Position = polyline.Centroid()
+            //};
+            //buildings.Add(building);
+            //});
+
+            ////validate no overlaps
+            //List<Building> valid = CheckRoadOverlaps(buildings.ToList(), m_Graph.Relations.Select(r => r.Curve).ToList());
+            //valid = CheckBuildingOverlaps(valid, buildings1);
+            ////add validated to graph
+            //valid.ForEach(b => m_Graph.Entities.Add(b.BHoM_Guid, b));
+            ////track step results
+            //m_Results.Add(new LLMGrowthResult(m_Graph.BHoM_Guid, 1, m_Timestep, m_Graph.DeepClone()));
+
+            //valid.ForEach(b => m_Results.Add(new ClusterGrowthResult(b.BHoM_Guid, 1, m_Timestep, b.Boundary)));
     }
 
 

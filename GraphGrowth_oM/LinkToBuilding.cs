@@ -1,10 +1,11 @@
-﻿using System;
+﻿using BH.oM.Analytical.Graph;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace BH.oM.GraphGrowth
 {
-    public interface IGrowthRule
+    public class LinkToBuilding : Relation
     {
     }
 }
