@@ -20,6 +20,7 @@ using System.Xml;
 using System.Collections;
 using BH.Engine.Geometry;
 using System.Transactions;
+using Accord;
 
 namespace BH.Engine.Adapters.GraphGrowth
 {
@@ -40,11 +41,36 @@ namespace BH.Engine.Adapters.GraphGrowth
 
             while (m_Timestep < steps)
             {
-                //Dictionary<Guid, double> entityDepth = SpaceSyntax.Compute.EntityDepth(m_Graph, config.Start.BHoM_Guid);
-                List<IRelation> sorted = m_Graph.Relations.Shuffle().ToList();//.OrderBy(r => entityDepth[r.Source]).ToList();
-                foreach (int i in Query.RandomExponentialIndex(config.BranchesPerStep, 0, sorted.Count() - 1))
+                //get relations to attempt branch
+                List<IRelation> candidates = m_Graph.RelationsToBranch(config);
+                
+                int bCount = 0;
+                Dictionary<Guid, List<Guid>> adj = Analytical.Query.Adjacency(m_Graph);
+                foreach (IRelation relation in candidates )
                 {
-                    m_Graph = Modify.Branch(m_Graph, sorted[i], isoDist, 0.1, config.SelfIntersectTolerance);
+                    List<Node> junctions = m_Graph.JunctionNodes(adj);
+
+                    var r =  Modify.Branch(m_Graph, relation, config.TargetBranchLength, config.PercentageLengthChange, junctions);
+                    if(r != null )
+                    {
+                        m_Graph = r.Item1;
+                        m_Results.Add(new BranchGrowthResult(m_Graph.BHoM_Guid, m_Timestep+"_" + bCount, m_Timestep, r.Item2));
+                        bCount++;
+                    }
+                    //update adjacency
+                    adj = Analytical.Query.Adjacency(m_Graph);
+                }
+
+                List<Node> toExtend = m_Graph.NodesToBranch(config, adj);
+                foreach(Node node in toExtend)
+                {
+                    var n = m_Graph.Extend(node, config.TargetExtensionLength, config.PercentageLengthChange);
+                    if (n != null)
+                    {
+                        m_Graph = n.Item1;
+                        m_Results.Add(new ExtendGrowthResult(m_Graph.BHoM_Guid, m_Timestep + "_" + bCount, m_Timestep, n.Item2));
+                        bCount++;
+                    }
                 }
 
                 m_Timestep += m_Tick;
